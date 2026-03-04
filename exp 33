@@ -1,0 +1,42 @@
+import cv2
+import numpy as np
+
+def create_image_with_rectangle():
+    # -----------------------------
+    # Step 1: Get Image Size
+    # -----------------------------
+    height = int(input("Enter image height: "))
+    width = int(input("Enter image width: "))
+
+    # -----------------------------
+    # Step 2: Create White Image
+    # -----------------------------
+    image = np.ones((height, width, 3), dtype=np.uint8) * 255
+
+    # -----------------------------
+    # Step 3: Define Rectangle Coordinates
+    # (Rectangle drawn at center)
+    # -----------------------------
+    start_point = (width // 4, height // 4)
+    end_point = (3 * width // 4, 3 * height // 4)
+
+    # Rectangle color in BGR
+    color = (0, 0, 255)   # Red
+
+    thickness = 3  # Border thickness
+
+    # -----------------------------
+    # Step 4: Draw Rectangle
+    # -----------------------------
+    cv2.rectangle(image, start_point, end_point, color, thickness)
+
+    # -----------------------------
+    # Step 5: Display Image
+    # -----------------------------
+    cv2.imshow("White Image with Rectangle", image)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
+
+# Call the function
+create_image_with_rectangle()
