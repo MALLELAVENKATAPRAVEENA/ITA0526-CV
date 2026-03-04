@@ -1,0 +1,58 @@
+import cv2
+import numpy as np
+
+def subtract_background():
+    # -----------------------------
+    # Step 1: Read Input Image
+    # -----------------------------
+    image = cv2.imread("colour.png")   # Replace with your image file
+
+    if image is None:
+        print("Error: Image not found!")
+        return
+
+    # -----------------------------
+    # Step 2: Convert to HSV
+    # -----------------------------
+    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+
+    # -----------------------------
+    # Step 3: Define Background Color Range
+    # Example: Green Background Removal
+    # -----------------------------
+    lower_color = np.array([35, 50, 50])   # Lower HSV limit
+    upper_color = np.array([85, 255, 255]) # Upper HSV limit
+
+    # -----------------------------
+    # Step 4: Create Mask
+    # -----------------------------
+    mask = cv2.inRange(hsv, lower_color, upper_color)
+
+    # Invert mask to keep foreground
+    mask_inv = cv2.bitwise_not(mask)
+
+    # -----------------------------
+    # Step 5: Extract Foreground
+    # -----------------------------
+    foreground = cv2.bitwise_and(image, image, mask=mask_inv)
+
+    # Optional: Create white background
+    white_bg = np.ones_like(image, dtype=np.uint8) * 255
+    background = cv2.bitwise_and(white_bg, white_bg, mask=mask)
+
+    # Combine foreground + white background
+    final_output = cv2.add(foreground, background)
+
+    # -----------------------------
+    # Step 6: Display Results
+    # -----------------------------
+    cv2.imshow("Original Image", image)
+    cv2.imshow("Mask", mask)
+    cv2.imshow("Background Removed", final_output)
+
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
+
+# Call the function
+subtract_background()
