@@ -1,0 +1,63 @@
+import cv2
+import numpy as np
+
+def subtract_foreground_color(image_path):
+    # -----------------------------
+    # Step 1: Read Input Image
+    # -----------------------------
+    image = cv2.imread(image_path)
+
+    if image is None:
+        print("Error: Could not read image.")
+        return
+
+    # -----------------------------
+    # Step 2: Convert BGR to HSV
+    # -----------------------------
+    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+
+    # -----------------------------
+    # Step 3: Define Foreground Color Range
+    # Example: Red color (two ranges in HSV)
+    # -----------------------------
+    lower_red1 = np.array([0, 50, 50])
+    upper_red1 = np.array([10, 255, 255])
+
+    lower_red2 = np.array([170, 50, 50])
+    upper_red2 = np.array([180, 255, 255])
+
+    # Create masks
+    mask1 = cv2.inRange(hsv, lower_red1, upper_red1)
+    mask2 = cv2.inRange(hsv, lower_red2, upper_red2)
+
+    mask = mask1 + mask2   # Combined red mask
+
+    # -----------------------------
+    # Step 4: Remove Foreground
+    # -----------------------------
+    mask_inv = cv2.bitwise_not(mask)
+
+    # Keep only background (foreground removed)
+    result = cv2.bitwise_and(image, image, mask=mask_inv)
+
+    # Optional: Replace removed region with white
+    white_bg = np.ones_like(image, dtype=np.uint8) * 255
+    removed_area = cv2.bitwise_and(white_bg, white_bg, mask=mask)
+
+    final_output = cv2.add(result, removed_area)
+
+    # -----------------------------
+    # Step 5: Display Results
+    # -----------------------------
+    cv2.imshow("Original Image", image)
+    cv2.imshow("Foreground Mask", mask)
+    cv2.imshow("Foreground Removed Image", final_output)
+
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
+
+# -----------------------------
+# Call Function
+# -----------------------------
+subtract_foreground_color("colour.png")
