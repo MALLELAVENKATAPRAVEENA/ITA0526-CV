@@ -1,0 +1,55 @@
+import cv2
+import numpy as np
+
+# -----------------------------
+# Step 1: Read the Input Image
+# -----------------------------
+image = cv2.imread("sample.png")   # Replace with your image path
+
+if image is None:
+    print("Error: Image not found!")
+    exit()
+
+# Convert to Grayscale
+gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+# -----------------------------
+# Step 2: Simple Binary Threshold
+# -----------------------------
+threshold_value = 127
+max_value = 255
+
+ret1, binary = cv2.threshold(gray, threshold_value, max_value, cv2.THRESH_BINARY)
+
+# -----------------------------
+# Step 3: Binary Inverse Threshold
+# -----------------------------
+ret2, binary_inv = cv2.threshold(gray, threshold_value, max_value, cv2.THRESH_BINARY_INV)
+
+# -----------------------------
+# Step 4: Range Based Threshold
+# -----------------------------
+lower = 100
+upper = 200
+
+range_segment = cv2.inRange(gray, lower, upper)
+
+# -----------------------------
+# Step 5: Otsu's Threshold
+# -----------------------------
+ret3, otsu = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+
+print("Otsu's Optimal Threshold Value:", ret3)
+
+# -----------------------------
+# Step 6: Display All Results
+# -----------------------------
+cv2.imshow("Original Image", image)
+cv2.imshow("Grayscale Image", gray)
+cv2.imshow("Binary Threshold", binary)
+cv2.imshow("Binary Inverse Threshold", binary_inv)
+cv2.imshow("Range Based Segmentation", range_segment)
+cv2.imshow("Otsu Segmentation", otsu)
+
+cv2.waitKey(0)
+cv2.destroyAllWindows()
